@@ -16,6 +16,10 @@ module GithubHelper::Commands::Review::Matcher
     end
 
     def report
+      unless @matches.empty? != @interesting_when_exist
+        raise StandardError.new('Trying to print report when in illegal state - not supported')
+      end
+
       if @matches.empty?
         report_no_matches
       else

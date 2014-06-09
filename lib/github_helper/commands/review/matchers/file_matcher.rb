@@ -3,10 +3,10 @@ require 'github_helper/commands/review/matchers/basic_matcher'
 module GithubHelper::Commands::Review::Matcher
 
   class FileMatcher < BasicMatcher
-    def initialize(name, interesting_when_exist=true)
+    def initialize(name)
       @interesting_name = name
 
-      super(interesting_when_exist)
+      super(true)
     end
 
     def process_file(pull_file)
@@ -23,10 +23,6 @@ module GithubHelper::Commands::Review::Matcher
 
     def report_matches
       puts 'File ' + @interesting_name + ' was modified'
-    end
-
-    def report_no_matches
-      puts @interesting_name + ' file was not touched'
     end
   end
 
