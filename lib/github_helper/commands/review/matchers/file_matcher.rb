@@ -1,33 +1,33 @@
-class GithubHelper::Commands::Review::FileMatcher
-  def initialize(name, interesting_when_exist=true)
-    @interesting_name = name
-    @interesting_when_exist = interesting_when_exist
-    @matches = []
-  end
+require 'github_helper/commands/review/matchers/basic_matcher'
 
-  def process_file(pull_file)
-    path = pull_file[:filename]
-    path_split = path.split('/')
-    filename = path_split[-1]
+module GithubHelper::Commands::Review::Matcher
 
-    if @interesting_name == filename
-      @matches.push(filename)
+  class FileMatcher < BasicMatcher
+    def initialize(name, interesting_when_exist=true)
+      @interesting_name = name
+
+      super(interesting_when_exist)
     end
-  end
 
-  def interesting?
-    if @interesting_when_exist
-      @matches.length != 0
-    else
-      @matches.length == 0
+    def process_file(pull_file)
+      path = pull_file[:filename]
+      path_split = path.split('/')
+      filename = path_split[-1]
+
+      if @interesting_name == filename
+        @matches.push(path)
+      end
     end
-  end
 
-  def report
-    if @matches.empty?
-      puts @interesting_name + ' file was not touched'
-    else
+    protected
+
+    def report_matches
       puts 'File ' + @interesting_name + ' was modified'
     end
+
+    def report_no_matches
+      puts @interesting_name + ' file was not touched'
+    end
   end
+
 end

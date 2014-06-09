@@ -1,34 +1,34 @@
-class GithubHelper::Commands::Review::DirMatcher
-  def initialize(name, interesting_when_exist=true)
-    @interesting_name = name
-    @interesting_when_exist = interesting_when_exist
-    @matches = []
-  end
+require 'github_helper/commands/review/matchers/basic_matcher'
 
-  def process_file(pull_file)
-    path = pull_file[:filename]
-    path_split = path.split('/')
+module GithubHelper::Commands::Review::Matcher
 
-    path_split[0...-1].each do |dirname|
-      if @interesting_name.include?(dirname)
-        @matches.push(dirname)
+  class DirMatcher < BasicMatcher
+    def initialize(name, interesting_when_exist=true)
+      @interesting_name = name
+
+      super(interesting_when_exist)
+    end
+
+    def process_file(pull_file)
+      path = pull_file[:filename]
+      path_split = path.split('/')
+
+      path_split[0...-1].each do |dirname|
+        if @interesting_name.include?(dirname)
+          @matches.push(dirname)
+        end
       end
     end
-  end
 
-  def interesting?
-    if @interesting_when_exist
-      @matches.length != 0
-    else
-      @matches.length == 0
-    end
-  end
+    protected
 
-  def report
-    if @matches.empty?
-      puts @interesting_name + ' dir was not touched'
-    else
+    def report_matches
       puts 'Dir ' + @interesting_name + ' was changed'
     end
+
+    def report_no_matches
+      puts @interesting_name + ' dir was not touched'
+    end
   end
+
 end

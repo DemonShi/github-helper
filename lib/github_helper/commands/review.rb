@@ -19,9 +19,9 @@ class GithubHelper::Commands::Review
 
   def create_matchers
     matchers = []
-    matchers.push(FileMatcher.new('Gemfile'))
-    matchers.push(FileMatcher.new('.gemspec'))
-    matchers.push(DirMatcher.new('spec', false))
+    matchers.push(Matcher::FileMatcher.new('Gemfile'))
+    matchers.push(Matcher::FileMatcher.new('.gemspec'))
+    matchers.push(Matcher::DirMatcher.new('spec', false))
 
     matchers
   end
