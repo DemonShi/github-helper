@@ -1,7 +1,8 @@
-$LOAD_PATH << File.expand_path('../', __FILE__)
+#!/usr/bin/env ruby
+
+$LOAD_PATH << File.expand_path('../../lib/', __FILE__)
 
 require 'octokit'
-
 require 'github_helper/commands'
 
 begin
