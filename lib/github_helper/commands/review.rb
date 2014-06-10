@@ -3,6 +3,8 @@ require 'github_helper/client'
 class GithubHelper::Commands::Review
   require 'github_helper/commands/review/matchers/file_matcher'
   require 'github_helper/commands/review/matchers/dir_matcher'
+  require 'github_helper/commands/review/matchers/too_big_to_analyze_matcher'
+  require 'github_helper/commands/review/matchers/word_matcher'
 
   # PROJECT = 'demonshi-test1/bigfile'
   PROJECT = 'puppetlabs/puppet'
@@ -22,6 +24,12 @@ class GithubHelper::Commands::Review
     matchers.push(Matcher::FileMatcher.new('Gemfile'))
     matchers.push(Matcher::FileMatcher.new('.gemspec'))
     matchers.push(Matcher::DirMatcher.new('spec', false))
+    matchers.push(Matcher::WordMatcher.new('/dev/null'))
+    matchers.push(Matcher::WordMatcher.new('raise'))
+    matchers.push(Matcher::WordMatcher.new('.write'))
+    matchers.push(Matcher::WordMatcher.new('%x'))
+    matchers.push(Matcher::WordMatcher.new('exec'))
+    matchers.push(Matcher::TooBigToAnalyzeMatcher.new)
 
     matchers
   end
@@ -36,6 +44,7 @@ class GithubHelper::Commands::Review
   end
 
   def process_repo(repo)
+    # TODO implement pagination
     @client.pull_requests(repo, :state => 'open').each do |pull_request|
       number = pull_request[:number]
 
