@@ -15,7 +15,7 @@ module GithubHelper::Commands::Review::Matcher
 
       path_split[0...-1].each do |dirname|
         if @interesting_name.include?(dirname)
-          @matches.push(dirname)
+          @matches.push(path)
         end
       end
     end
