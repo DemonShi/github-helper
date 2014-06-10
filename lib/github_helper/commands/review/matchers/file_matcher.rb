@@ -22,7 +22,7 @@ module GithubHelper::Commands::Review::Matcher
     protected
 
     def report_matches
-      puts 'File ' + @interesting_name + ' was modified'
+      puts 'File "' + @interesting_name + '" was modified'
     end
   end
 

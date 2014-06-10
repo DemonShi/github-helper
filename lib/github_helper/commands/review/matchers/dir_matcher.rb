@@ -23,11 +23,11 @@ module GithubHelper::Commands::Review::Matcher
     protected
 
     def report_matches
-      puts 'Dir ' + @interesting_name + ' was changed'
+      puts 'Dir "' + @interesting_name + '" was changed'
     end
 
     def report_no_matches
-      puts @interesting_name + ' dir was not touched'
+      puts '"' + @interesting_name + '" dir was not touched'
     end
   end
 
