@@ -1,3 +1,5 @@
+require 'github_helper/error'
+
 class GithubHelper::Commands::ReviewCommand
 
   class BasicMatcher
@@ -17,7 +19,7 @@ class GithubHelper::Commands::ReviewCommand
 
     def report
       unless @matches.empty? != @interesting_when_exist
-        raise StandardError.new('Trying to print report when in illegal state - not supported')
+        raise GithubHelper::Error.new('Trying to print report when in illegal state - not supported')
       end
 
       if @matches.empty?

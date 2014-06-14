@@ -7,6 +7,8 @@ require 'github_helper/commands'
 
 begin
   GithubHelper::Commands.run
+rescue GithubHelper::CommandLineError => e
+  puts e.message
 rescue Faraday::SSLError => e
   puts 'Failed to open HTTPS connection. You probably forgot to set SSL_CERT_FILE env variable.'
   raise e

@@ -31,15 +31,12 @@ module GithubHelper::Commands
     end
 
     def run
-      # TODO think of better exception type
       unless @repository && @repository.split('/').length == 2
-        puts 'Invalid repository name. Should be in format "account/project"'
-        return
+        raise GithubHelper::CommandLineError, 'Invalid repository name. Should be in format "account/project"'
       end
 
       unless @client.repository?(@repository)
-        puts 'Repository ' + @repository + ' does not exits'
-        return
+        raise GithubHelper::CommandLineError, "Repository #{@repository} does not exits"
       end
 
       process_repo()
