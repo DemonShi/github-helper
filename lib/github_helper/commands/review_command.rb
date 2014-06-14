@@ -18,18 +18,22 @@ module GithubHelper::Commands
     end
 
     def process_argv(argv)
-      @project = argv.shift
+      @repository = argv.shift
     end
 
     def run
       # TODO think of better exception type
-      unless @project && @project.split('/').length == 2
-        puts 'Invalid project name. Should be in format "account/project"'
+      unless @repository && @repository.split('/').length == 2
+        puts 'Invalid repository name. Should be in format "account/project"'
         return
       end
 
-      # TODO check that project exist
-      process_repo(@project)
+      unless @client.repository?(@repository)
+        puts 'Repository ' + @repository + ' does not exits'
+        return
+      end
+
+      process_repo(@repository)
     end
 
     private
