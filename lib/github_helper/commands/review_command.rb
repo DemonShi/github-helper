@@ -33,7 +33,7 @@ module GithubHelper::Commands
         return
       end
 
-      process_repo(@repository)
+      process_repo()
     end
 
     private
@@ -62,33 +62,44 @@ module GithubHelper::Commands
       positive_matchers.each { |matcher| print '- '; matcher.report }
     end
 
-    def process_repo(repo)
-      # TODO implement pagination
-      @client.pull_requests(repo, :state => 'open').each do |pull_request|
-        number = pull_request[:number]
+    def process_repo
+      pulls = @client.pull_requests(@repository, :state => 'open')
+      last_response = @client.last_response
+      process_pulls(pulls)
+      while last_response.rels[:next]
 
-        matchers = create_matchers()
-
-        load_pull_files(repo, number, matchers)
-        print_pull_report(pull_request[:html_url], matchers)
+        pulls = @client.paginate(last_response.rels[:next].href)
+        last_response = @client.last_response
+        process_pulls(pulls)
       end
     end
 
-    def load_pull_files(repo, pull_number, matchers)
+    def load_pull_files(pull_number, matchers)
       fetching_text = 'Fetching files...'
       print fetching_text
 
-      process_files(@client.pull_request_files(repo, pull_number, :auto_paginate => true), matchers)
+      process_files(@client.pull_request_files(@repository, pull_number, :auto_paginate => true), matchers)
 
       while @client.last_response.rels[:next]
         print "\r"
         fetching_text += '.'
-
         print fetching_text
+
         process_files(@client.paginate(@client.last_response.rels[:next].href), matchers)
       end
 
       print "\r", ' ' * fetching_text.length, "\r"
+    end
+
+    def process_pulls(pulls)
+      pulls.each do |pull_request|
+        number = pull_request[:number]
+
+        matchers = create_matchers
+
+        load_pull_files(number, matchers)
+        print_pull_report(pull_request[:html_url], matchers)
+      end
     end
 
     def process_files(files, matchers)
