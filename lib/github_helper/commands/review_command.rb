@@ -3,17 +3,26 @@ require 'github_helper/client'
 
 module GithubHelper::Commands
   class ReviewCommand < BasicCommand
+    NAME = 'review'
+
     require 'github_helper/commands/review/matchers/file_matcher'
     require 'github_helper/commands/review/matchers/dir_matcher'
     require 'github_helper/commands/review/matchers/too_big_to_analyze_matcher'
     require 'github_helper/commands/review/matchers/word_matcher'
 
-
-    NAME = 'review'
-    # PROJECT = 'demonshi-test1/bigfile'
-    # PROJECT = 'puppetlabs/puppet'
-
     def initialize
+      @matchers = [
+          Matcher::FileMatcher.new('Gemfile'),
+          Matcher::FileMatcher.new('.gemspec'),
+          Matcher::DirMatcher.new('spec', false),
+          Matcher::WordMatcher.new('/dev/null'),
+          Matcher::WordMatcher.new('raise'),
+          Matcher::WordMatcher.new('.write'),
+          Matcher::WordMatcher.new('%x'),
+          Matcher::WordMatcher.new('exec'),
+          Matcher::TooBigToAnalyzeMatcher.new
+      ]
+
       @client = GithubHelper::Client.get
     end
 
@@ -38,25 +47,10 @@ module GithubHelper::Commands
 
     private
 
-    def create_matchers
-      matchers = []
-      matchers.push(Matcher::FileMatcher.new('Gemfile'))
-      matchers.push(Matcher::FileMatcher.new('.gemspec'))
-      matchers.push(Matcher::DirMatcher.new('spec', false))
-      matchers.push(Matcher::WordMatcher.new('/dev/null'))
-      matchers.push(Matcher::WordMatcher.new('raise'))
-      matchers.push(Matcher::WordMatcher.new('.write'))
-      matchers.push(Matcher::WordMatcher.new('%x'))
-      matchers.push(Matcher::WordMatcher.new('exec'))
-      matchers.push(Matcher::TooBigToAnalyzeMatcher.new)
-
-      matchers
-    end
-
-    def print_pull_report(url, matchers)
+    def print_pull_report(url)
       print url + ' - '
 
-      positive_matchers = matchers.select { |matcher| matcher.interesting? }
+      positive_matchers = @matchers.select { |matcher| matcher.interesting? }
 
       print !positive_matchers.empty? ? 'interesting' : 'not interesting', "\n"
       positive_matchers.each { |matcher| print '- '; matcher.report }
@@ -74,18 +68,18 @@ module GithubHelper::Commands
       end
     end
 
-    def load_pull_files(pull_number, matchers)
+    def load_pull_files(pull_number)
       fetching_text = 'Fetching files...'
       print fetching_text
 
-      process_files(@client.pull_request_files(@repository, pull_number, :auto_paginate => true), matchers)
+      process_files(@client.pull_request_files(@repository, pull_number, :auto_paginate => true))
 
       while @client.last_response.rels[:next]
         print "\r"
         fetching_text += '.'
         print fetching_text
 
-        process_files(@client.paginate(@client.last_response.rels[:next].href), matchers)
+        process_files(@client.paginate(@client.last_response.rels[:next].href))
       end
 
       print "\r", ' ' * fetching_text.length, "\r"
@@ -95,21 +89,19 @@ module GithubHelper::Commands
       pulls.each do |pull_request|
         number = pull_request[:number]
 
-        matchers = create_matchers
+        @matchers.each { |matcher| matcher.clear }
 
-        load_pull_files(number, matchers)
-        print_pull_report(pull_request[:html_url], matchers)
+        load_pull_files(number)
+        print_pull_report(pull_request[:html_url])
       end
     end
 
-    def process_files(files, matchers)
+    def process_files(files)
       files.each do |pull_file|
-        matchers.each do |matcher|
+        @matchers.each do |matcher|
           matcher.process_file(pull_file)
         end
       end
-
-
     end
 
   end

@@ -27,6 +27,10 @@ module GithubHelper::Commands::ReviewCommand::Matcher
       end
     end
 
+    def clear
+      @matches.clear
+    end
+
     protected
 
     def report_no_matches
