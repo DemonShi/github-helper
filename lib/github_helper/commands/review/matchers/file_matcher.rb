@@ -1,6 +1,6 @@
 require 'github_helper/commands/review/matchers/basic_matcher'
 
-module GithubHelper::Commands::ReviewCommand::Matcher
+class GithubHelper::Commands::ReviewCommand
 
   class FileMatcher < BasicMatcher
     def initialize(name)

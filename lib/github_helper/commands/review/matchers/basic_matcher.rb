@@ -1,4 +1,4 @@
-module GithubHelper::Commands::ReviewCommand::Matcher
+class GithubHelper::Commands::ReviewCommand
 
   class BasicMatcher
 

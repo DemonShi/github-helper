@@ -12,15 +12,15 @@ module GithubHelper::Commands
 
     def initialize
       @matchers = [
-          Matcher::FileMatcher.new('Gemfile'),
-          Matcher::FileMatcher.new('.gemspec'),
-          Matcher::DirMatcher.new('spec', false),
-          Matcher::WordMatcher.new('/dev/null'),
-          Matcher::WordMatcher.new('raise'),
-          Matcher::WordMatcher.new('.write'),
-          Matcher::WordMatcher.new('%x'),
-          Matcher::WordMatcher.new('exec'),
-          Matcher::TooBigToAnalyzeMatcher.new
+          FileMatcher.new('Gemfile'),
+          FileMatcher.new('.gemspec'),
+          DirMatcher.new('spec', false),
+          WordMatcher.new('/dev/null'),
+          WordMatcher.new('raise'),
+          WordMatcher.new('.write'),
+          WordMatcher.new('%x'),
+          WordMatcher.new('exec'),
+          TooBigToAnalyzeMatcher.new
       ]
 
       @client = GithubHelper::Client.get
