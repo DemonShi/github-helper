@@ -24,10 +24,27 @@ module GithubHelper::Commands
       ]
 
       @client = GithubHelper::Client.get
+      @verbose = 0
     end
 
     def process_argv(argv)
-      @repository = argv.shift
+      while argv.length > 0
+        arg = argv.shift
+        if arg[0] == '-'
+          case arg
+          when '-v', '-vv', '-vvv'
+            @verbose = arg.count 'v'
+          else
+            raise GithubHelper::CommandLineError, "Unknown argument #{arg}"
+          end
+        elsif !@repository
+          @repository = arg
+        else
+          raise GithubHelper::CommandLineError, "Unknown argument #{arg}"
+        end
+      end
+
+      @matchers.each { |matcher| matcher.verbose = @verbose }
     end
 
     def run
@@ -50,7 +67,7 @@ module GithubHelper::Commands
       positive_matchers = @matchers.select { |matcher| matcher.interesting? }
 
       print !positive_matchers.empty? ? 'interesting' : 'not interesting', "\n"
-      positive_matchers.each { |matcher| print '- '; matcher.report }
+      positive_matchers.each { |matcher| matcher.report }
     end
 
     def process_repo

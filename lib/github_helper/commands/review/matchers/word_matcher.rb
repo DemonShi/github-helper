@@ -3,6 +3,8 @@ require 'github_helper/commands/review/matchers/basic_matcher'
 class GithubHelper::Commands::ReviewCommand
 
   class WordMatcher < BasicMatcher
+    REPORT_MAX_TEXT_LENGTH = 80
+
     def initialize(word)
       @interesting_word = word
       @interesting_regex = get_regex_from_word(word)
@@ -16,8 +18,25 @@ class GithubHelper::Commands::ReviewCommand
       return unless patch
 
       patch.each_line.each_with_index do |line, index|
-        if %w(+ -).include?(line[0]) && @interesting_regex.match(line)
-          @matches.push(:file => pull_file[:filename], :line => index)
+        if %w(+ -).include?(line[0])
+          line = line[1..-1]
+          line.scan(@interesting_regex) do |match|
+            side_text_length = (REPORT_MAX_TEXT_LENGTH - match.length) / 2
+
+            offset = Regexp.last_match.offset(0)
+            first_offset = [0, offset[0] - side_text_length].max
+            last_offset = [offset[1] + side_text_length, line.length].min
+
+            text = ''
+            unless first_offset == 0
+              text += '...'
+            end
+            text += line[first_offset..last_offset].strip
+            unless last_offset == line.length
+              text += '...'
+            end
+            @matches.push(:file => pull_file[:filename], :line => index, :text => text)
+          end
         end
       end
     end
@@ -25,7 +44,14 @@ class GithubHelper::Commands::ReviewCommand
     protected
 
     def report_matches
-      puts 'Word "' + @interesting_word + '" was found in a pull request file'
+      puts %Q|Word "#{@interesting_word}" was found in a pull request file|
+    end
+
+    def report_single_match(match)
+      puts "#{match[:file]}:#{match[:line]}"
+      if @verbose > 2
+        puts match[:text], ''
+      end
     end
 
     private
@@ -44,7 +70,7 @@ class GithubHelper::Commands::ReviewCommand
         regex_word_str += '\b'
       end
 
-      Regexp.new('^.*' + regex_word_str + '.*$')
+      Regexp.new(regex_word_str)
     end
 
     begin
