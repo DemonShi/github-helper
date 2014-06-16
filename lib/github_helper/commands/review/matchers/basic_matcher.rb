@@ -27,7 +27,7 @@ class GithubHelper::Commands::ReviewCommand
       end
 
       if @verbose > 0
-        print '- '
+        print '* '
         if @matches.empty?
           report_no_matches
         else

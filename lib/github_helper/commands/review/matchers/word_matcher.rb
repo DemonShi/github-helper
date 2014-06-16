@@ -17,28 +17,36 @@ class GithubHelper::Commands::ReviewCommand
 
       return unless patch
 
+      file_matches = []
+
       patch.each_line.each_with_index do |line, index|
         if %w(+ -).include?(line[0])
-          line = line[1..-1]
-          line.scan(@interesting_regex) do |match|
+          line_text = line[1..-1]
+          line_text.scan(@interesting_regex) do |match|
             side_text_length = (REPORT_MAX_TEXT_LENGTH - match.length) / 2
 
             offset = Regexp.last_match.offset(0)
             first_offset = [0, offset[0] - side_text_length].max
-            last_offset = [offset[1] + side_text_length, line.length].min
+            last_offset = [offset[1] + side_text_length, line_text.length].min
 
             text = ''
             unless first_offset == 0
               text += '...'
             end
-            text += line[first_offset..last_offset].strip
-            unless last_offset == line.length
+            text += line_text[first_offset..last_offset].strip
+            unless last_offset == line_text.length
               text += '...'
             end
-            @matches.push(:file => pull_file[:filename], :line => index, :text => text)
+
+            file_matches.push(line[0] + text)
           end
         end
       end
+
+      if file_matches.length > 0
+        @matches.push(:file => pull_file[:filename], :matches => file_matches)
+      end
+
     end
 
     protected
@@ -48,9 +56,9 @@ class GithubHelper::Commands::ReviewCommand
     end
 
     def report_single_match(match)
-      puts "#{match[:file]}:#{match[:line]}"
+      puts "#{match[:file]}"
       if @verbose > 2
-        puts match[:text], ''
+        puts match[:matches].join("\n"), ''
       end
     end
 
