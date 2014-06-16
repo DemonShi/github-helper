@@ -3,7 +3,7 @@ require 'github_helper/client'
 
 module GithubHelper::Commands
   class ReviewCommand < BasicCommand
-    NAME = 'review'
+    DESCRIPTION = 'Processes open review for the repo and shows if they are interesting'
 
     require 'github_helper/commands/review/matchers/file_matcher'
     require 'github_helper/commands/review/matchers/dir_matcher'

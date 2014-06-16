@@ -2,6 +2,8 @@
 
 $LOAD_PATH.unshift(File.expand_path('../../lib/', __FILE__))
 
+APP_NAME = 'github-helper'
+
 require 'octokit'
 require 'github_helper/commands'
 

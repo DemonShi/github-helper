@@ -3,19 +3,26 @@ require 'github_helper/error'
 module GithubHelper
   module Commands
     require 'github_helper/commands/review_command'
+    require 'github_helper/commands/help_command'
 
-    COMMANDS = [
-        ReviewCommand
-    ].freeze
+    COMMANDS = {
+        :review => ReviewCommand,
+        :help => HelpCommand
+    }.freeze
+    HelpCommand.set_commands(COMMANDS)
 
     def self.run
       command_name = ARGV.shift
 
-      command_class = COMMANDS.find { |command| command::NAME == command_name }
+      unless command_name
+        command_name = 'help'
+      end
+
+      command_class = COMMANDS[command_name.to_sym]
       unless command_class
         message = 'Invalid command. '
         message += 'Available commands: '
-        message += COMMANDS.collect { |command| command::NAME }.join(', ')
+        message += COMMANDS.keys.collect { |k| k.to_s }.join(', ')
 
         raise GithubHelper::CommandLineError, message
       end
