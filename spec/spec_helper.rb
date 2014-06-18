@@ -6,6 +6,9 @@ ARGV.clear
 
 RSpec.configure do |config|
   config.mock_with :mocha
+  config.expect_with :rspec do |c|
+    c.syntax = [:should]
+  end
 end
 
 module GithubHelper

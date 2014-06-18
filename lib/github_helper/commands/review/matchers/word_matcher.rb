@@ -20,7 +20,7 @@ class GithubHelper::Commands::ReviewCommand
       file_matches = []
 
       patch.each_line.each_with_index do |line, index|
-        if %w(+ -).include?(line[0])
+        if %w(+ -).include?(line[0, 1])
           line_text = line[1..-1]
           line_text.scan(@interesting_regex) do |match|
             side_text_length = (REPORT_MAX_TEXT_LENGTH - match.length) / 2
@@ -38,7 +38,7 @@ class GithubHelper::Commands::ReviewCommand
               text += '...'
             end
 
-            file_matches.push(line[0] + text)
+            file_matches.push(line[0, 1] + text)
           end
         end
       end
@@ -68,13 +68,13 @@ class GithubHelper::Commands::ReviewCommand
     def get_regex_from_word(word)
       regex_word_str = ''
 
-      unless NON_WORD_CHARS.include?(word[0])
+      unless NON_WORD_CHARS.include?(word[0, 1])
         regex_word_str += '\b'
       end
 
       regex_word_str += '(' + Regexp.escape(word) + ')'
 
-      unless NON_WORD_CHARS.include?(word[-1])
+      unless NON_WORD_CHARS.include?(word[-1, 1])
         regex_word_str += '\b'
       end
 
