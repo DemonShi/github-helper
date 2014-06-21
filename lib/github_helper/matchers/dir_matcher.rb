@@ -1,6 +1,6 @@
-require 'github_helper/commands/review/matchers/basic_matcher'
+require 'github_helper/matchers/basic_matcher'
 
-class GithubHelper::Commands::ReviewCommand
+module GithubHelper::Matchers
 
   class DirMatcher < BasicMatcher
     def initialize(name, interesting_when_exist=true)

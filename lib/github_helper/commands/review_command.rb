@@ -1,26 +1,26 @@
 require 'github_helper/commands/basic_command'
 require 'github_helper/client'
 
+require 'github_helper/matchers/file_matcher'
+require 'github_helper/matchers/dir_matcher'
+require 'github_helper/matchers/too_big_to_analyze_matcher'
+require 'github_helper/matchers/word_matcher'
+
 module GithubHelper::Commands
   class ReviewCommand < BasicCommand
     DESCRIPTION = 'Processes open review for the repo and shows if they are interesting'
 
-    require 'github_helper/commands/review/matchers/file_matcher'
-    require 'github_helper/commands/review/matchers/dir_matcher'
-    require 'github_helper/commands/review/matchers/too_big_to_analyze_matcher'
-    require 'github_helper/commands/review/matchers/word_matcher'
-
     def initialize
       @matchers = [
-          FileMatcher.new('Gemfile'),
-          FileMatcher.new('.gemspec'),
-          DirMatcher.new('spec', false),
-          WordMatcher.new('/dev/null'),
-          WordMatcher.new('raise'),
-          WordMatcher.new('.write'),
-          WordMatcher.new('%x'),
-          WordMatcher.new('exec'),
-          TooBigToAnalyzeMatcher.new
+          GithubHelper::Matchers::FileMatcher.new('Gemfile'),
+          GithubHelper::Matchers::FileMatcher.new('.gemspec'),
+          GithubHelper::Matchers::DirMatcher.new('spec', false),
+          GithubHelper::Matchers::WordMatcher.new('/dev/null'),
+          GithubHelper::Matchers::WordMatcher.new('raise'),
+          GithubHelper::Matchers::WordMatcher.new('.write'),
+          GithubHelper::Matchers::WordMatcher.new('%x'),
+          GithubHelper::Matchers::WordMatcher.new('exec'),
+          GithubHelper::Matchers::TooBigToAnalyzeMatcher.new
       ]
 
       @client = GithubHelper::Client.get

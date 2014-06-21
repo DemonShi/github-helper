@@ -1,8 +1,8 @@
 #! /usr/bin/env ruby
 require 'spec_helper'
-require 'github_helper/commands/review/matchers/basic_matcher'
+require 'github_helper/matchers/basic_matcher'
 
-class TestMatcher < GithubHelper::Commands::ReviewCommand::BasicMatcher
+class TestMatcher < GithubHelper::Matchers::BasicMatcher
   def add_match(match)
     @matches.push(match)
   end
@@ -15,7 +15,7 @@ class TestMatcher < GithubHelper::Commands::ReviewCommand::BasicMatcher
   end
 end
 
-describe GithubHelper::Commands::ReviewCommand::BasicMatcher do
+describe GithubHelper::Matchers::BasicMatcher do
   context "with interesting_when_exist equals to true" do
     let(:matcher) { TestMatcher.new(true) }
 

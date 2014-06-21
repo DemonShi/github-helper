@@ -1,11 +1,11 @@
 #! /usr/bin/env ruby
 require 'spec_helper'
-require 'github_helper/commands/review/matchers/too_big_to_analyze_matcher'
+require 'github_helper/matchers/too_big_to_analyze_matcher'
 
-describe GithubHelper::Commands::ReviewCommand::TooBigToAnalyzeMatcher do
+describe GithubHelper::Matchers::TooBigToAnalyzeMatcher do
   FILE_PATH = 'some/path'
 
-  let(:matcher) { GithubHelper::Commands::ReviewCommand::TooBigToAnalyzeMatcher.new() }
+  let(:matcher) { GithubHelper::Matchers::TooBigToAnalyzeMatcher.new() }
 
   it "should be non interesting by default" do
     matcher.should_not be_interesting

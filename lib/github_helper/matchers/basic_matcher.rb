@@ -1,6 +1,6 @@
 require 'github_helper/error'
 
-class GithubHelper::Commands::ReviewCommand
+module GithubHelper::Matchers
 
   class BasicMatcher
 

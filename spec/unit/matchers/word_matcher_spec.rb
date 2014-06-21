@@ -1,10 +1,10 @@
 #! /usr/bin/env ruby
 require 'spec_helper'
-require 'github_helper/commands/review/matchers/word_matcher'
+require 'github_helper/matchers/word_matcher'
 
-describe GithubHelper::Commands::ReviewCommand::WordMatcher do
+describe GithubHelper::Matchers::WordMatcher do
   it "should be non interesting by default" do
-    matcher = GithubHelper::Commands::ReviewCommand::WordMatcher.new('')
+    matcher = GithubHelper::Matchers::WordMatcher.new('')
 
     matcher.should_not be_interesting
   end
@@ -12,7 +12,7 @@ describe GithubHelper::Commands::ReviewCommand::WordMatcher do
   it "should be interesting when matches" do
     word = 'foo'
     patch = '+  foo bar'
-    matcher = GithubHelper::Commands::ReviewCommand::WordMatcher.new(word)
+    matcher = GithubHelper::Matchers::WordMatcher.new(word)
 
     matcher.process_file(:patch => patch)
     matcher.should be_interesting
@@ -21,7 +21,7 @@ describe GithubHelper::Commands::ReviewCommand::WordMatcher do
   it "should be non interesting when not matches" do
     word = 'foo'
     patch = '+  bar'
-    matcher = GithubHelper::Commands::ReviewCommand::WordMatcher.new(word)
+    matcher = GithubHelper::Matchers::WordMatcher.new(word)
 
     matcher.process_file(:patch => patch)
     matcher.should_not be_interesting
@@ -30,7 +30,7 @@ describe GithubHelper::Commands::ReviewCommand::WordMatcher do
   it "should be non interesting when word exists but followed by word symbol" do
     word = 'foo'
     patch = '+  fooo'
-    matcher = GithubHelper::Commands::ReviewCommand::WordMatcher.new(word)
+    matcher = GithubHelper::Matchers::WordMatcher.new(word)
 
     matcher.process_file(:patch => patch)
     matcher.should_not be_interesting
@@ -39,7 +39,7 @@ describe GithubHelper::Commands::ReviewCommand::WordMatcher do
   it "should be non interesting after clear" do
     word = 'foo'
     patch = '+  foo'
-    matcher = GithubHelper::Commands::ReviewCommand::WordMatcher.new(word)
+    matcher = GithubHelper::Matchers::WordMatcher.new(word)
 
     matcher.process_file(:patch => patch)
 
@@ -60,7 +60,7 @@ describe GithubHelper::Commands::ReviewCommand::WordMatcher do
       ]
 
       tests.each do |params|
-        matcher = GithubHelper::Commands::ReviewCommand::WordMatcher.new(params[:word])
+        matcher = GithubHelper::Matchers::WordMatcher.new(params[:word])
         matcher.process_file(:patch => params[:patch])
 
         if params[:should]
