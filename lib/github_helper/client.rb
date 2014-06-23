@@ -10,6 +10,9 @@ module GithubHelper
     def self.get
       unless @@client
         @@client = ::Octokit::Client.new(:login => DEFAULT_LOGIN, :password => DEFAULT_PASSWORD)
+        @@client.configure do |config|
+          config.connection_options[:request] = { :timeout => 20 }
+        end
       end
 
       @@client
