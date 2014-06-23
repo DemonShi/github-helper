@@ -96,6 +96,12 @@ HERE
       end
 
       process_repo()
+    rescue Octokit::ClientError => error
+      print "\r"
+      puts error
+    rescue StandardError => error
+      print "\r"
+      raise error
     end
 
     private
@@ -119,6 +125,10 @@ HERE
         last_response = @client.last_response
         process_pulls(pulls)
       end
+
+    rescue Octokit::ServerError => error
+      puts 'Failed to load pull requests'
+      puts error
     end
 
     def load_pull_files(pull_number)
@@ -126,7 +136,6 @@ HERE
       print "\r"
       print fetching_text
 
-      # TODO catch octokit error
       process_files(@client.pull_request_files(@repository, pull_number))
 
       while @client.last_response.rels[:next]
@@ -138,6 +147,9 @@ HERE
       end
 
       print "\r", ' ' * fetching_text.length, "\r"
+    rescue Octokit::ServerError => error
+      puts 'Failed to load request files'
+      puts error
     end
 
     def process_pulls(pulls)
