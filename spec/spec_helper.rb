@@ -13,6 +13,8 @@ RSpec.configure do |config|
   end
 end
 
+APP_NAME = 'github-helper'
+
 module GithubHelper
   module Commands
 
