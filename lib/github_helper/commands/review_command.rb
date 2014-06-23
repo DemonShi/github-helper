@@ -53,7 +53,7 @@ module GithubHelper::Commands
       end
 
       unless @client.repository?(@repository)
-        raise GithubHelper::CommandLineError, "Repository #{@repository} does not exits"
+        raise GithubHelper::CommandLineError, "Repository #{@repository} does not exists"
       end
 
       process_repo()
@@ -86,7 +86,8 @@ module GithubHelper::Commands
       fetching_text = 'Fetching files...'
       print fetching_text
 
-      process_files(@client.pull_request_files(@repository, pull_number, :auto_paginate => true))
+      # TODO catch octokit error
+      process_files(@client.pull_request_files(@repository, pull_number))
 
       while @client.last_response.rels[:next]
         print "\r"
