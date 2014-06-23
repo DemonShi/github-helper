@@ -53,4 +53,4 @@ License
 
 See [LICENSE](LICENSE) file.
 
-Andrii Nikitiuk aka DemonShi
+[Andrii Nikitiuk](http://ua.linkedin.com/pub/andrii-nikitiuk/32/609/455/) aka DemonShi
