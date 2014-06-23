@@ -89,7 +89,7 @@ HERE
         raise GithubHelper::CommandLineError, 'Invalid repository name. Should be in format "account/project"'
       end
 
-      print 'Loading...'
+      print 'Loading repo...'
 
       unless @client.repository?(@repository)
         raise GithubHelper::CommandLineError, "Repository #{@repository} does not exists"

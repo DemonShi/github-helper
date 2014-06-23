@@ -13,7 +13,7 @@ rescue GithubHelper::CommandLineError => e
   puts e.message
 rescue Faraday::SSLError => e
   puts 'Failed to open HTTPS connection. You probably forgot to set SSL_CERT_FILE env variable.'
-  raise e
+  exit 1
 rescue Faraday::TimeoutError
   puts 'Connection timeout'
   exit 1
